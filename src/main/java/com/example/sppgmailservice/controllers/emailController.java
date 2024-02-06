@@ -1,5 +1,6 @@
 package com.example.sppgmailservice.controllers;
 
+import com.example.sppgmailservice.interfaces.MessageResponse;
 import com.example.sppgmailservice.interfaces.SendEmailRequest;
 import com.example.sppgmailservice.services.SendEmailService;
 import com.google.api.services.gmail.model.Draft;
@@ -30,12 +31,13 @@ public class emailController {
     }
 
     @PostMapping("/send/file")
-    public Message sendEmailFile(@RequestParam("file") MultipartFile file, @RequestParam("from") String fromEmail, @RequestParam("to") String toEmail) throws IOException, MessagingException, GeneralSecurityException {
+    public ResponseEntity<MessageResponse> sendEmailFile(@RequestParam("file") MultipartFile file, @RequestParam("from") String fromEmail, @RequestParam("to") String toEmail) throws IOException, MessagingException, GeneralSecurityException {
         // Create a temporary file to store the MultipartFile's contents
         File tempFile = File.createTempFile("email_attachment", ".docx");
 
         // Transfer the MultipartFile's contents to the temporary file
         file.transferTo(tempFile);
-        return sendEmailService.createDraftMessageWithAttachment(fromEmail,toEmail, tempFile);
+        sendEmailService.createDraftMessageWithAttachment(fromEmail,toEmail, tempFile);
+        return ResponseEntity.ok(new MessageResponse("Correo enviado exitosamente"));
     }
 }
