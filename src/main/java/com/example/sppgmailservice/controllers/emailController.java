@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,10 +39,12 @@ public class emailController {
 
             // Transfer the MultipartFile's contents to the temporary file
             file.transferTo(tempFile);
+            System.out.println("ENVIANDO CORREO");
             Message message = sendEmailService.createDraftMessageWithAttachment(fromEmail, toEmail, tempFile);
+            return ResponseEntity.ok(new MessageResponse("Correo enviado exitosamente"));
         } catch (IOException | IllegalStateException | MessagingException | GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.ok(new MessageResponse("Correo enviado exitosamente"));
+
     }
 }
