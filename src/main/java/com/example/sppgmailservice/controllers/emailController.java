@@ -33,11 +33,15 @@ public class emailController {
     @PostMapping("/send/file")
     public ResponseEntity<MessageResponse> sendEmailFile(@RequestParam("file") MultipartFile file, @RequestParam("from") String fromEmail, @RequestParam("to") String toEmail) throws IOException, MessagingException, GeneralSecurityException {
         // Create a temporary file to store the MultipartFile's contents
-        File tempFile = File.createTempFile("email_attachment", ".docx");
+        try {
+            File tempFile = File.createTempFile("email_attachment", ".docx");
 
-        // Transfer the MultipartFile's contents to the temporary file
-        file.transferTo(tempFile);
-        sendEmailService.createDraftMessageWithAttachment(fromEmail,toEmail, tempFile);
+            // Transfer the MultipartFile's contents to the temporary file
+            file.transferTo(tempFile);
+            Message message = sendEmailService.createDraftMessageWithAttachment(fromEmail, toEmail, tempFile);
+        } catch (IOException | IllegalStateException | MessagingException | GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(new MessageResponse("Correo enviado exitosamente"));
     }
 }
