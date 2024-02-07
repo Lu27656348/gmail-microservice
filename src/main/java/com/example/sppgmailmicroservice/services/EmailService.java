@@ -12,6 +12,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 @Service
 public class EmailService {
 
@@ -29,9 +33,15 @@ public class EmailService {
             mimeMessageHelper.setText("Mensaje de prueba");
             if(file != null) {
                 for (int i = 0; i < file.length; i++) {
-                    mimeMessageHelper.addAttachment(
-                            file[i].getOriginalFilename(), new ByteArrayResource(file[i].getBytes())
-                    );
+                    try (InputStream is = file[i].getInputStream()) {
+                            File fileTemp = File.createTempFile("upload", ".tmp");
+                            file[i].transferTo(fileTemp);
+                            mimeMessageHelper.addAttachment(
+                                    mimeMessage.getFileName(), fileTemp
+                            );
+                    } catch (IOException e) {
+                        throw new IOException(e.getMessage());
+                    }
                 }
             }
 
