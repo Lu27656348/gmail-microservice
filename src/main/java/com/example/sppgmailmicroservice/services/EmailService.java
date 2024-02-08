@@ -6,6 +6,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -15,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Service
 public class EmailService {
@@ -22,7 +25,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    public ResponseEntity<MessageResponse> sendEmail(MultipartFile file[], String emailFrom, String emailTo) throws MessagingException {
+    public ResponseEntity<MessageResponse> sendEmail(MultipartFile file, String emailFrom, String emailTo) throws MessagingException {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
@@ -31,20 +34,26 @@ public class EmailService {
             mimeMessageHelper.setTo(emailTo);
             mimeMessageHelper.setSubject("Prueba");
             mimeMessageHelper.setText("Mensaje de prueba");
-            if(file != null) {
+
+            mimeMessageHelper.addAttachment(
+                    file.getOriginalFilename(), file
+            );
+            /*
+            if(file != null ) {
                 for (int i = 0; i < file.length; i++) {
-                    try (InputStream is = file[i].getInputStream()) {
-                            File fileTemp = File.createTempFile("upload", ".tmp");
+
+                        System.out.println(file[i].getOriginalFilename());
+                            File fileTemp = File.createTempFile("upload", ".temp");
                             file[i].transferTo(fileTemp);
+
                             mimeMessageHelper.addAttachment(
-                                    mimeMessage.getFileName(), fileTemp
+                                    Objects.requireNonNull(file[i].getOriginalFilename()), fileTemp
                             );
-                    } catch (IOException e) {
-                        throw new IOException(e.getMessage());
-                    }
                 }
             }
 
+
+             */
             javaMailSender.send(mimeMessage);
             return ResponseEntity.ok(new MessageResponse("Correo enviado exitosamente"));
         }catch (Exception e){
