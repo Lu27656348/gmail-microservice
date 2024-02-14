@@ -25,6 +25,44 @@ public class EmailService {
     @Autowired
     private JavaMailSender javaMailSender;
 
+    public ResponseEntity<MessageResponse> sendMultipleEmail(MultipartFile[] file, String emailFrom, String emailTo) throws MessagingException {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
+            mimeMessageHelper.setFrom(emailFrom);
+            mimeMessageHelper.setTo(emailTo);
+            mimeMessageHelper.setSubject("Prueba");
+            mimeMessageHelper.setText("Mensaje de prueba");
+
+            /*
+            mimeMessageHelper.addAttachment(
+                    file.getOriginalFilename(), file
+            );
+            */
+
+            if(file != null ) {
+                for (int i = 0; i < file.length; i++) {
+
+                        System.out.println(file[i].getOriginalFilename());
+                            File fileTemp = File.createTempFile("upload", ".temp");
+                            file[i].transferTo(fileTemp);
+
+                            mimeMessageHelper.addAttachment(
+                                    Objects.requireNonNull(file[i].getOriginalFilename()), fileTemp
+                            );
+                }
+            }
+
+            javaMailSender.send(mimeMessage);
+            return ResponseEntity.ok(new MessageResponse("Correo enviado exitosamente"));
+        }catch (Exception e){
+            throw  new RuntimeException(e);
+        }
+
+
+    }
+
     public ResponseEntity<MessageResponse> sendEmail(MultipartFile file, String emailFrom, String emailTo) throws MessagingException {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -62,4 +100,5 @@ public class EmailService {
 
 
     }
+
 }

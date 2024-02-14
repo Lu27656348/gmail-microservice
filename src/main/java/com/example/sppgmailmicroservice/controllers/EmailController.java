@@ -30,4 +30,9 @@ public class EmailController {
     public ResponseEntity<MessageResponse> sendEmailWithFile(@RequestParam("file") MultipartFile file, @RequestParam("emailFrom") String emailFrom, @RequestParam("emailTo") String emailTo) throws MessagingException {
         return emailService.sendEmail(file,emailFrom,emailTo);
     }
+
+    @PostMapping("/send/multiple/file")
+    public ResponseEntity<MessageResponse> sendEmailWithMultipleFile(@RequestParam("file") MultipartFile[] file, @RequestParam("emailFrom") String emailFrom, @RequestParam("emailTo") String emailTo) throws MessagingException {
+        return emailService.sendMultipleEmail(file,emailFrom,emailTo);
+    }
 }
