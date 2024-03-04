@@ -1,5 +1,6 @@
 package com.example.sppgmailmicroservice.services;
 
+import com.example.sppgmailmicroservice.interfaces.requests.SendEmailRequest;
 import com.example.sppgmailmicroservice.interfaces.responses.MessageResponse;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -34,12 +35,6 @@ public class EmailService {
             mimeMessageHelper.setTo(emailTo);
             mimeMessageHelper.setSubject("Prueba");
             mimeMessageHelper.setText("Mensaje de prueba");
-
-            /*
-            mimeMessageHelper.addAttachment(
-                    file.getOriginalFilename(), file
-            );
-            */
 
             if(file != null ) {
                 for (int i = 0; i < file.length; i++) {
@@ -99,6 +94,23 @@ public class EmailService {
         }
 
 
+    }
+
+    public ResponseEntity<MessageResponse> sendNotificationEmail (SendEmailRequest sendEmailRequest){
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,false);
+            mimeMessageHelper.setFrom(sendEmailRequest.getEmailFrom());
+            mimeMessageHelper.setTo(sendEmailRequest.getEmailTo());
+            mimeMessageHelper.setSubject(sendEmailRequest.getSubject());
+            mimeMessageHelper.setText(sendEmailRequest.getHtmlContent(),false);
+
+            javaMailSender.send(mimeMessage);
+            return ResponseEntity.ok(new MessageResponse("Correo enviado exitosamente"));
+        }catch (Exception e){
+            throw  new RuntimeException(e);
+        }
     }
 
 }

@@ -6,5 +6,7 @@ import lombok.Data;
 public class SendEmailRequest {
     private String emailTo;
     private String emailFrom;
+    private String subject;
+    private String htmlContent;
 
 }

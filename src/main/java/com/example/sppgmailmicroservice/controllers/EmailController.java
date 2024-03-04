@@ -22,8 +22,7 @@ public class EmailController {
 
     @PostMapping("/send")
     public ResponseEntity<MessageResponse> sendEmail(@RequestBody SendEmailRequest sendEmailRequest) throws MessagingException {
-        return ResponseEntity.ok(new MessageResponse("Todo bien"));
-        //return emailService.sendEmail(file,sendEmailRequest.getEmailFrom(),sendEmailRequest.getEmailTo());
+        return emailService.sendNotificationEmail(sendEmailRequest);
     }
 
     @PostMapping("/send/file")
