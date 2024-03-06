@@ -26,15 +26,15 @@ public class EmailService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    public ResponseEntity<MessageResponse> sendMultipleEmail(MultipartFile[] file, String emailFrom, String emailTo) throws MessagingException {
+    public ResponseEntity<MessageResponse> sendMultipleEmail(MultipartFile[] file, String emailFrom, String emailTo, String subject, String htmlContent) throws MessagingException {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
             mimeMessageHelper.setFrom(emailFrom);
             mimeMessageHelper.setTo(emailTo);
-            mimeMessageHelper.setSubject("Prueba");
-            mimeMessageHelper.setText("Mensaje de prueba");
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(htmlContent);
 
             if(file != null ) {
                 for (int i = 0; i < file.length; i++) {
@@ -58,15 +58,15 @@ public class EmailService {
 
     }
 
-    public ResponseEntity<MessageResponse> sendEmail(MultipartFile file, String emailFrom, String emailTo) throws MessagingException {
+    public ResponseEntity<MessageResponse> sendEmail(MultipartFile file, String emailFrom, String emailTo, String subject, String htmlContent) throws MessagingException {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
             mimeMessageHelper.setFrom(emailFrom);
             mimeMessageHelper.setTo(emailTo);
-            mimeMessageHelper.setSubject("Prueba");
-            mimeMessageHelper.setText("Mensaje de prueba");
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(htmlContent);
 
             mimeMessageHelper.addAttachment(
                     file.getOriginalFilename(), file
