@@ -35,7 +35,7 @@ public class EmailController {
         return emailService.sendEmail(
                 file,
                 emailDataRequest.getEmailFrom(),
-                emailDataRequest.getEmailFrom(),
+                emailDataRequest.getEmailTo(),
                 emailDataRequest.getSubject(),
                 emailDataRequest.getHtmlContent()
         );
